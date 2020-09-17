@@ -58,7 +58,7 @@ class Obs implements GatewayApplicationInterface
         $path,
         $file,
         $options = [
-            'partSize' => 1024 * 10,
+            'partSize' => 1024 * 100,
         ]
     ) {
         $partSize = $options['partSize'];
