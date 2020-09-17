@@ -2,13 +2,12 @@
 
 namespace TELstatic\Rakan\Gateways;
 
-use Illuminate\Support\Facades\Log;
 use League\Flysystem\AdapterInterface;
 use League\Flysystem\Config;
 use League\Flysystem\Util;
+use Obs\ObsClient;
 use Obs\ObsException;
 use TELstatic\Rakan\Interfaces\GatewayApplicationInterface;
-use Obs\ObsClient;
 
 class Obs implements GatewayApplicationInterface
 {
@@ -194,7 +193,7 @@ class Obs implements GatewayApplicationInterface
             $this->client->putObject([
                 'Bucket' => $this->bucket,
                 'Key'    => $path,
-                'Body'   => $contents
+                'Body'   => $contents,
             ]);
 
             return true;
@@ -254,7 +253,8 @@ class Obs implements GatewayApplicationInterface
                     [
                         'Bucket' => $this->bucket,
                         'Key'    => $path,
-                    ]);
+                    ]
+                );
 
                 return true;
             } catch (ObsException $e) {
@@ -329,9 +329,9 @@ class Obs implements GatewayApplicationInterface
         $result['dirname'] = Util::dirname($result['path']);
 
         if (isset($object['LastModified'])) {
-
             $result['timestamp'] = strtotime($object['LastModified']);
         }
+
         if (substr($result['path'], -1) === '/') {
             $result['type'] = 'dir';
             $result['path'] = rtrim($result['path'], '/');
@@ -362,6 +362,7 @@ class Obs implements GatewayApplicationInterface
             'Bucket' => $this->bucket,
             'Key'    => $path,
         ]);
+
         $object['size'] = $result['ContentLength'];
 
         return $object;
@@ -381,8 +382,7 @@ class Obs implements GatewayApplicationInterface
      */
     public function getTimestamp($path)
     {
-        $result = $this->client->getObjectMetadata(
-            [
+        $result = $this->client->getObjectMetadata([
                 'Bucket' => $this->bucket,
                 'Key'    => $path,
             ]);
@@ -416,7 +416,7 @@ class Obs implements GatewayApplicationInterface
 
         return [
             'type'     => 'file',
-            'contents' => (string)$result->toArray()['Body'],
+            'contents' => (string) $result->toArray()['Body'],
         ];
     }
 
@@ -438,5 +438,4 @@ class Obs implements GatewayApplicationInterface
     {
         return rtrim($this->host, '/').'/'.$path;
     }
-
 }
